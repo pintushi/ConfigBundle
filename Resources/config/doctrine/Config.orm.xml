@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping">
+    <entity name="Pintushi\Bundle\ConfigBundle\Entity\Config" table="pintushi_config">
+        <id name="id" column="id" type="integer">
+            <generator strategy="AUTO" />
+        </id>
+         <unique-constraints>
+            <unique-constraint columns="entity,record_id" />
+        </unique-constraints>
+
+        <field name="scopedEntity" column="entity" type="string" length="255"  nullable="true"/>
+        <field name="recordId"  column="record_id" type="integer" nullable="true"/>
+
+        <one-to-many field="values" target-entity="Pintushi\Bundle\ConfigBundle\Entity\ConfigValue" mapped-by="config"  orphan-removal="true">
+             <cascade>
+                <cascade-all/>
+            </cascade>
+        </one-to-many>
+    </entity>
+</doctrine-mapping>

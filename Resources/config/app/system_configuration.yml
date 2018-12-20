@@ -1,0 +1,15 @@
+system_configuration:
+    groups:
+        platform:
+            title: 设置
+            icon:  fa-hdd-o
+        general_setup:
+            title: 通用
+    tree:
+        system_configuration:
+            platform:
+                priority: 255
+                children:
+                    general_setup:
+                        priority: 255
+                        children: []

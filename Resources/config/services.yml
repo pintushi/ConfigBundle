@@ -1,0 +1,202 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Pintushi\Bundle\ConfigBundle\:
+        resource: '../../{Repository,DataFixtures,Command}'
+
+    Pintushi\Bundle\ConfigBundle\Controller\:
+        resource: '../../Controller'
+        tags: ['controller.service_arguments']
+
+    Pintushi\Bundle\ConfigBundle\Controller\ConfigurationController:
+        arguments:
+            - "@pintushi_config.global"
+        tags: ['controller.service_arguments']
+
+    pintushi_config.config_bag:
+        class: 'Pintushi\Bundle\ConfigBundle\Config\ConfigBag'
+        arguments:
+            - []
+            - '@service_container'
+
+    pintushi_config.config_definition_bag:
+        class: 'Pintushi\Bundle\ConfigBundle\Config\ConfigDefinitionImmutableBag'
+        arguments:
+            - []
+
+    pintushi_config.cache:
+        public: false
+        autowire: false
+        autoconfigure: false
+        parent: doctrine_cache.abstract.chain
+        calls:
+            - [setNamespace, [ 'pintushi_config' ] ]
+
+    pintushi_config.scope_manager.abstract:
+        abstract: true
+        arguments:
+            - '@doctrine'
+            - '@pintushi_config.cache'
+            - '@event_dispatcher'
+            - '@Pintushi\Bundle\ConfigBundle\Repository\ConfigRepository'
+
+    pintushi_config.scope.user:
+        class: 'Pintushi\Bundle\ConfigBundle\Config\UserScopeManager'
+        autowire: false
+        public: false
+        autoconfigure: false
+        parent: pintushi_config.scope_manager.abstract
+        calls:
+            - [setSecurityContext, [ '@security.token_storage' ]]
+        tags:
+            - { name: pintushi_config.scope, scope: user, priority: 255 }
+
+    pintushi_config.scope.organization:
+        class: 'Pintushi\Bundle\ConfigBundle\Config\OrganizationScopeManager'
+        autowire: false
+        public: false
+        autoconfigure: false
+        parent: pintushi_config.scope_manager.abstract
+        calls:
+            - [setSecurityContext, [ '@security.token_storage' ]]
+        tags:
+            - { name: pintushi_config.scope, scope: organization, priority: 255 }
+
+    Pintushi\Bundle\ConfigBundle\Config\OrganizationScopeManager: "@pintushi_config.scope.organization"
+
+    pintushi_config.scope.global:
+        autowire: false
+        public: true
+        autoconfigure: false
+        class: 'Pintushi\Bundle\ConfigBundle\Config\GlobalScopeManager'
+        parent: pintushi_config.scope_manager.abstract
+        tags:
+            - { name: pintushi_config.scope, scope: global, priority: -255 }
+
+    Pintushi\Bundle\ConfigBundle\Config\GlobalScopeManager: "@pintushi_config.scope.global"
+
+    # a template definition for scoped config managers
+    # actually this service is replaced with an alias to the most priority scoped config manager
+    pintushi_config.manager:
+        class: 'Pintushi\Bundle\ConfigBundle\Config\ConfigManager'
+        arguments:
+            - ~ # scope; it is set by Pintushi\Bundle\ConfigBundle\DependencyInjection\Compiler\SystemConfigurationPass
+            - '@pintushi_config.config_definition_bag'
+            - '@event_dispatcher'
+
+    Pintushi\Bundle\ConfigBundle\Config\ConfigManager: "@pintushi_config.manager"
+
+    pintushi_config.provider.abstract_provider:
+        class: Pintushi\Bundle\ConfigBundle\Provider\AbstractProvider
+        abstract: true
+        arguments:
+            - '@pintushi_config.config_bag'
+            - '@translator'
+            - '@form.factory'
+            - '@security.authorization_checker'
+            - '@pintushi_config.configuration_search_provider.chain'
+            - '@form.registry'
+        tags:
+            -  { name: pintushi_config.configuration_provider }
+
+    pintushi_config.provider.system_configuration.form_provider:
+        autowire: false
+        public: false
+        autoconfigure: false
+        class: 'Pintushi\Bundle\ConfigBundle\Provider\SystemConfigurationFormProvider'
+        parent: 'pintushi_config.provider.abstract_provider'
+        lazy: true
+
+    Pintushi\Bundle\ConfigBundle\Provider\SystemConfigurationFormProvider: "@pintushi_config.provider.system_configuration.form_provider"
+
+    pintushi_config.form.config_subscriber:
+        class: 'Pintushi\Bundle\ConfigBundle\Form\EventListener\ConfigSubscriber'
+        arguments:
+          - '@pintushi_config.user'
+
+    pintushi_config.type.form:
+        class:  'Pintushi\Bundle\ConfigBundle\Form\Type\FormType'
+        arguments:
+            - '@pintushi_config.form.config_subscriber'
+            - '@service_container'
+        tags:
+            - { name: form.type, alias: pintushi_config_form_type }
+
+    pintushi_config.type.form_field:
+        class:  'Pintushi\Bundle\ConfigBundle\Form\Type\FormFieldType'
+        tags:
+            - { name: form.type, alias: pintushi_config_form_field_type }
+
+    pintushi_config.type.parent_scope_checkbox:
+        class: 'Pintushi\Bundle\ConfigBundle\Form\Type\ParentScopeCheckbox'
+        tags:
+            - { name: form.type, alias: pintushi_config_parent_scope_checkbox_type }
+
+    pintushi_config.type.config_checkbox:
+        class: 'Pintushi\Bundle\ConfigBundle\Form\Type\ConfigCheckbox'
+        tags:
+            - { name: form.type, alias: pintushi_config_checkbox }
+
+    pintushi_config.type.config_file:
+        class: 'Pintushi\Bundle\ConfigBundle\Form\Type\ConfigFileType'
+        arguments:
+            - '@pintushi_config.form.config_file_data_transformer'
+        tags:
+            - { name: form.type }
+
+    pintushi_config.form.handler.config:
+        class: 'Pintushi\Bundle\ConfigBundle\Form\Handler\ConfigHandler'
+        arguments:
+            - '@pintushi_config.global'
+
+    Pintushi\Bundle\ConfigBundle\Form\Handler\ConfigHandler: "@pintushi_config.form.handler.config"
+
+    pintushi_config.manager.section:
+        class: 'Pintushi\Bundle\ConfigBundle\Config\ConfigSectionManager'
+        arguments:
+            - '@pintushi_config.provider.system_configuration.form_provider'
+
+    Pintushi\Bundle\ConfigBundle\Config\ConfigSectionManager: "@pintushi_config.manager.section"
+
+    pintushi_config.form.config_file_data_transformer:
+        class: 'Pintushi\Bundle\ConfigBundle\Form\DataTransformer\ConfigFileDataTransformer'
+        arguments:
+            - '@Pintushi\Bundle\SecurityBundle\ORM\DoctrineHelper'
+            - '@validator'
+
+    pintushi_config.cache.doctrine_metadata:
+        autowire: false
+        public: false
+        autoconfigure: false
+        parent: doctrine_cache.abstract.chain
+        calls:
+            - [ setNamespace, [ 'doctrine_metadata_config' ] ]
+
+    pintushi_config.configuration_search_provider.chain:
+        class: Pintushi\Bundle\ConfigBundle\Provider\ChainSearchProvider
+
+    pintushi_config.configuration_search_provider.group:
+        class: Pintushi\Bundle\ConfigBundle\Provider\GroupSearchProvider
+        arguments:
+            - '@pintushi_config.config_bag'
+            - '@translator'
+        tags:
+            - { name: pintushi_config.configuration_search_provider, priority: 0 }
+
+    pintushi_config.configuration_search_provider.field:
+        class: Pintushi\Bundle\ConfigBundle\Provider\FieldSearchProvider
+        arguments:
+            - '@pintushi_config.config_bag'
+            - '@translator'
+            - '@pintushi_config.manager'
+        tags:
+            - { name: pintushi_config.configuration_search_provider, priority: 10 }
+
+    pintushi_config.provider.value.entity_id:
+        class: 'Pintushi\Bundle\ConfigBundle\Provider\Value\Entity\EntityIdByCriteriaProvider'
+        lazy: true
+        abstract: true
+

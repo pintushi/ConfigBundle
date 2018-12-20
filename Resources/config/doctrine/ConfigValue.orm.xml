@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping"
+    >
+    <entity name="Pintushi\Bundle\ConfigBundle\Entity\ConfigValue" table="pintushi_config_value">
+        <id name="id" column="id" type="integer">
+            <generator strategy="AUTO" />
+        </id>
+        <unique-constraints>
+            <unique-constraint columns="name,section,config_id" />
+        </unique-constraints>
+
+        <field name="name" column="name" length="255" type="string" />
+        <field name="section" column="section" length="50" type="string"  nullable="true"/>
+        <field name="textValue" column="text_value" type="string"  nullable="true"/>
+        <field name="objectValue" column="object_value" type="string"  nullable="true"/>
+        <field name="arrayValue" column="array_value" type="string"  nullable="true"/>
+        <field name="type" column="type" type="string"  length="20" nullable="false"/>
+        <field name="createdAt" column="created_at" type="datetime">
+            <gedmo:timestampable on="create"/>
+        </field>
+        <field name="updatedAt" column="updated_at" type="datetime" nullable="true">
+            <gedmo:timestampable on="update"/>
+        </field>
+
+        <many-to-one field="config" target-entity="Pintushi\Bundle\ConfigBundle\Entity\Config" inversed-by="values">
+            <join-column name="config_id" referenced-column-name="id" on-delete="CASCADE"/>
+        </many-to-one>
+    </entity>
+</doctrine-mapping>
