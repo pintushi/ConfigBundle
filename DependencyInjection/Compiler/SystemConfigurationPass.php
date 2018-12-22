@@ -4,8 +4,8 @@ namespace Pintushi\Bundle\ConfigBundle\DependencyInjection\Compiler;
 
 use Pintushi\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Pintushi\Bundle\ConfigBundle\DependencyInjection\SystemConfiguration\ProcessorDecorator;
-use Pintushi\Component\Config\Loader\CumulativeConfigLoader;
-use Pintushi\Component\Config\Loader\YamlCumulativeFileLoader;
+use Oro\Component\Config\Loader\CumulativeConfigLoader;
+use Oro\Component\Config\Loader\YamlCumulativeFileLoader;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
