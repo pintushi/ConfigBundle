@@ -2,7 +2,7 @@
 
 namespace Pintushi\Bundle\ConfigBundle\Repository;
 
-use Pintushi\Bundle\CoreBundle\Doctrine\ORM\EntityRepository;
+use Pintushi\Bundle\CoreBundle\Doctrine\ORM\ServiceEntityRepository as EntityRepository;
 use Pintushi\Bundle\ConfigBundle\Entity\Config;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
