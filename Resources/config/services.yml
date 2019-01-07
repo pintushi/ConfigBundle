@@ -11,11 +11,6 @@ services:
         resource: '../../Controller'
         tags: ['controller.service_arguments']
 
-    Pintushi\Bundle\ConfigBundle\Controller\ConfigurationController:
-        arguments:
-            - "@pintushi_config.global"
-        tags: ['controller.service_arguments']
-
     pintushi_config.config_bag:
         class: 'Pintushi\Bundle\ConfigBundle\Config\ConfigBag'
         arguments:
