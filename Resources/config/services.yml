@@ -34,7 +34,7 @@ services:
             - '@event_dispatcher'
             - '@Pintushi\Bundle\ConfigBundle\Repository\ConfigRepository'
 
-    pintushi_config.scope.user:
+    pintushi_config.user:
         class: 'Pintushi\Bundle\ConfigBundle\Config\UserScopeManager'
         autowire: false
         public: false
