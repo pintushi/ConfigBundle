@@ -34,7 +34,7 @@ services:
             - '@event_dispatcher'
             - '@Pintushi\Bundle\ConfigBundle\Repository\ConfigRepository'
 
-    pintushi_config.user:
+    pintushi_config.scope.user:
         class: 'Pintushi\Bundle\ConfigBundle\Config\UserScopeManager'
         autowire: false
         public: false
@@ -93,7 +93,7 @@ services:
         tags:
             -  { name: pintushi_config.configuration_provider }
 
-    pintushi_config.provider.system_configuration.form_provider:
+    pintushi_config.provider.global_configuration.form_provider:
         autowire: false
         public: false
         autoconfigure: false
@@ -101,7 +101,7 @@ services:
         parent: 'pintushi_config.provider.abstract_provider'
         lazy: true
 
-    Pintushi\Bundle\ConfigBundle\Provider\SystemConfigurationFormProvider: "@pintushi_config.provider.system_configuration.form_provider"
+    Pintushi\Bundle\ConfigBundle\Provider\SystemConfigurationFormProvider: "@pintushi_config.provider.global_configuration.form_provider"
 
     pintushi_config.form.config_subscriber:
         class: 'Pintushi\Bundle\ConfigBundle\Form\EventListener\ConfigSubscriber'
@@ -148,7 +148,7 @@ services:
     pintushi_config.manager.section:
         class: 'Pintushi\Bundle\ConfigBundle\Config\ConfigSectionManager'
         arguments:
-            - '@pintushi_config.provider.system_configuration.form_provider'
+            - '@pintushi_config.provider.global_configuration.form_provider'
 
     Pintushi\Bundle\ConfigBundle\Config\ConfigSectionManager: "@pintushi_config.manager.section"
 

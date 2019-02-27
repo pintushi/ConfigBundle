@@ -23,7 +23,7 @@ class SystemConfigurationPass implements CompilerPassInterface
     const SCOPE_MANAGER_TAG_NAME = 'pintushi_config.scope';
     const MAIN_MANAGER_SERVICE_ID = 'pintushi_config.manager';
 
-    const API_MANAGER_SERVICE_ID = 'pintushi_config.manager.section';
+    const SECTION_MANAGER_SERVICE_ID = 'pintushi_config.manager.section';
 
     /**
      * {@inheritdoc}
@@ -84,7 +84,7 @@ class SystemConfigurationPass implements CompilerPassInterface
         $mainScope = reset($scopes);
 
         $mainManagerDef = $container->getDefinition(self::MAIN_MANAGER_SERVICE_ID);
-        $apiManagerDef  = $container->getDefinition(self::API_MANAGER_SERVICE_ID);
+        $sectionManagerDef  = $container->getDefinition(self::SECTION_MANAGER_SERVICE_ID);
 
         // register scoped config managers
         /** @var Definition[] $managerDefs */
@@ -104,7 +104,7 @@ class SystemConfigurationPass implements CompilerPassInterface
                 ->setDefinition($managerId, $managerDef)
                 ->setPublic(true)
             ;
-            $apiManagerDef->addMethodCall('addConfigManager', [$scope, new Reference($managerId)]);
+            $sectionManagerDef->addMethodCall('addConfigManager', [$scope, new Reference($managerId)]);
         }
 
         // a main config manager should be an alias to the most priority scoped config manager
