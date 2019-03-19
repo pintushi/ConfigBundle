@@ -6,7 +6,7 @@ navigation:
                 position: 10
                 extras:
                     description: 'pintushi.config.menu.system_configuration.description'
-                route: 'pintushi_config_configuration_system'
+                route: 'api_system_configuration_tree'
 
         tree:
             application_menu:

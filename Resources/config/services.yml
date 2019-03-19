@@ -5,7 +5,17 @@ services:
         public: false
 
     Pintushi\Bundle\ConfigBundle\:
-        resource: '../../{Repository,DataFixtures,Command}'
+        resource: '../../{Repository,DataFixtures,Command,Controller}'
+
+    Pintushi\Bundle\ConfigBundle\Controller\OrganizationConfigurationController:
+        arguments:
+            - "@pintushi_config.organization"
+        tags: ['controller.service_arguments']
+
+    Pintushi\Bundle\ConfigBundle\Controller\SystemConfigurationController:
+        arguments:
+            - "@pintushi_config.global"
+        tags: ['controller.service_arguments']
 
     pintushi_config.config_bag:
         class: 'Pintushi\Bundle\ConfigBundle\Config\ConfigBag'
