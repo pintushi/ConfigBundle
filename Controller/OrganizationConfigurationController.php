@@ -81,7 +81,7 @@ class OrganizationConfigurationController extends Controller
 
     /**
      * @Route(
-     *     path="/organization/profile/{activeGroup}/{activeSubGroup}",
+     *     path="/organization/config/{activeGroup}/{activeSubGroup}",
      *     name="api_organization_profile_configuration",
      *     methods={"GET", "POST"},
      *     defaults={
